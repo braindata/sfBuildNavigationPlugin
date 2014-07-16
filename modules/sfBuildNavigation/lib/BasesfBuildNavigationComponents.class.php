@@ -10,6 +10,8 @@ class BasesfBuildNavigationComponents extends sfComponents
 {
   public function executeNavigation(sfWebRequest $request)
   {
+    if (!isset($this->style))
+      $this->style = $this->navi;
 
     $this->navigation = new sfBuildNavigation($this->getContext(), $this->navi);
   }
