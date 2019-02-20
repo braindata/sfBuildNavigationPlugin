@@ -60,15 +60,15 @@ class sfBuildNavigation
         {
           if (isset($item['param']) && isset($this->object)) {
 
-            $data = array();
-            foreach ($item['param'] as $key => $value){
-              $data[$key] = $value;
+            foreach ($item['param'] as $data_key => $data_value){
+              $method_key = $data_key;
+              $method_value = $data_value;
             }
 
-            $method = "get".sfInflector::camelize($data['key']);
+            $method = "get".sfInflector::camelize($method_key);
             $value = call_user_func(array($this->object, $method));
             
-            if ($data['value'] == $value)
+            if ($method_value == $value)
               $item['is_active'] = true;
 
           } else {  
