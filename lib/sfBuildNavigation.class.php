@@ -59,7 +59,12 @@ class sfBuildNavigation
         if (is_array($item['modules']) && in_array($this->module, $item['modules']))
         {
           if (isset($item['param']) && isset($this->object)) {
-            $data = each($item['param']);
+
+            $data = array();
+            foreach ($item['param'] as $key => $value){
+              $data[$key] = $value;
+            }
+
             $method = "get".sfInflector::camelize($data['key']);
             $value = call_user_func(array($this->object, $method));
             
