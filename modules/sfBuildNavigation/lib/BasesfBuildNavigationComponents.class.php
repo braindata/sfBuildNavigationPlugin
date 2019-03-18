@@ -10,9 +10,20 @@ class BasesfBuildNavigationComponents extends sfComponents
 {
   public function executeNavigation(sfWebRequest $request)
   {
-    if (!isset($this->style))
-      $this->style = $this->navi;
+    $module = $this->getContext()->getModuleName();
+    $action = $this->getContext()->getActionName();
 
-    $this->navigation = new sfBuildNavigation($this->getContext(), $this->navi);
+    if ($request->hasParameter('scope')){
+      $this->scope = $request->getParameter('scope');
+    } else {
+      $this->scope = null;
+    }
+
+    $this->navigation = new sfBuildNavigation($module, $action, $this->scope, $this->navi);
+
+    $this->items = $this->navigation->getItems();
+    $this->area = $this->navigation->getArea();
+
+    $this->style = "";
   }
 }

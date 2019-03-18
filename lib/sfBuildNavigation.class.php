@@ -11,15 +11,14 @@ class sfBuildNavigation
   protected $items = array();
   protected $area = array();
 
-  public function __construct($context, $navi = "main_navi")
+  public function __construct($module, $action, $scope, $navi = "main_navi")
   {
-    $this->module = $context->getModuleName();
-    $this->action = $context->getActionName();
-    $this->route  = $context->getRequest()->getAttribute('sf_route');;
+    $this->module = $module;
+    $this->action = $action;
+    $this->scope  = $scope;
     $this->navi   = $navi;
-    
-    if ($this->route instanceof sfDoctrineRoute)
-      $this->object = $this->route->getObject();
+
+    //var_dump($this->module); var_dump($this->action); var_dump($this->scope = $scope);
     
     $this->getConfig();
     $this->buildNavigation();
@@ -45,7 +44,7 @@ class sfBuildNavigation
   {
     return $this->area;
   }
-  
+
   protected function buildNavigation()
   {
     if ($config = $this->getConfig())
@@ -55,9 +54,15 @@ class sfBuildNavigation
       foreach ($this->items as $name => $item)
       {
         $item['is_active'] = false;
-        
+
         if (is_array($item['modules']) && in_array($this->module, $item['modules']))
         {
+          if ($this->scope && $this->scope == $item['scope']){
+            $this->area = $item;
+          } elseif ($this->scope == null) {
+            $this->area = $item;
+          }
+
           if (isset($item['param']) && isset($this->object)) {
 
             foreach ($item['param'] as $data_key => $data_value){
@@ -67,18 +72,18 @@ class sfBuildNavigation
 
             $method = "get".sfInflector::camelize($method_key);
             $value = call_user_func(array($this->object, $method));
-            
+
             if ($method_value == $value)
               $item['is_active'] = true;
 
-          } else {  
+          } else {
             $item['is_active'] = true;
           }
         }
-        
+
         if (!isset($item['param']))
           $item['param'] = array();
-        
+
         $this->items[$name] = $item;
       }
     }
