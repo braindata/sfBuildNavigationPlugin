@@ -11,14 +11,17 @@ class sfBuildNavigation
   protected $items = array();
   protected $area = array();
 
-  public function __construct($module, $action, $scope, $navi = "main_navi")
+  public function __construct($context, $scope, $navi = "main_navi")
   {
-    $this->module = $module;
-    $this->action = $action;
+    $this->module = $context->getModuleName();
+    $this->action = $context->getActionName();
+    $this->route  = $context->getRequest()->getAttribute('sf_route');;
+
     $this->scope  = $scope;
     $this->navi   = $navi;
 
-    //var_dump($this->module); var_dump($this->action); var_dump($this->scope = $scope);
+    if ($this->route instanceof sfDoctrineRoute)
+      $this->object = $this->route->getObject();
     
     $this->getConfig();
     $this->buildNavigation();
